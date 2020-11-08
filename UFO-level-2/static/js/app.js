@@ -5,8 +5,11 @@ var ufo = data;
 // YOUR CODE HERE!
 
 // Get a reference to the table body
+function buildtable(data) {
+
 
 var tbody = d3.select("tbody");
+tbody.html("");
 
 data.forEach((ufoReport) => {
     var row = tbody.append("tr");
@@ -15,35 +18,34 @@ data.forEach((ufoReport) => {
       cell.text(value);
     });
   });
+};
+buildtable(ufo)
 
-  // Assign the data from `data.js` to a descriptive variable
-var ufo = data;
+var Filters={}
+function createFilters() {
+  var changedElement=d3.select(this).select("input");
+  var elementValue=changedElement.property("value");
+  var id = changedElement.attr("id");
+  if (elementValue) {
+    Filters[id]=elementValue;
 
-// Select the button
-var button = d3.select("#filter-btn");
-
-// Select the form
-var form = d3.select("#datetime");
-
-// Create event handlers 
-button.on("click", runEnter);
-form.on("submit",runEnter);
-
-// Complete the event handler function for the form
-function runEnter() {
-
-  // Prevent the page from refreshing
-  d3.event.preventDefault();
+  }
+  else {
+    delete Filters[id];
+  }
+  filterufodata();
+}
+function filterufodata() {
   
-  // Select the input element and get the raw HTML node
-  var inputElement = d3.select("#datetime");
+  var ufo = data;
+  Object.entries(Filters).forEach(([key,value])=>{
+  filterdata=ufo.filter(row=> row[key]===value);
+  });
 
-  // Get the value property of the input element
-  var inputValue = inputElement.property("value");
+  
+  buildtable(filterdata);
+}
+d3.selectAll(".filter").on("change", createFilters);
 
-  console.log(inputValue);
-  console.log(ufo);
 
-  var filteredData = ufo.filter(date => ufo.datetime === inputValue);
 
-  console.log(filteredData);
